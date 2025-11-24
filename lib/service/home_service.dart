@@ -22,12 +22,14 @@ class MovieService {
     return results.map((e) => MovieModel.fromJson(e)).toList();
   }
 
-  Future<List<MovieModel>> fetchPopular() =>
-      getMovies("movie/popular");
+  Future<List<MovieModel>> fetchPopular() => getMovies("movie/popular");
 
-  Future<List<MovieModel>> fetchTopRated() =>
-      getMovies("movie/top_rated");
+  Future<List<MovieModel>> fetchTopRated() => getMovies("movie/top_rated");
 
-  Future<List<MovieModel>> fetchUpcoming() =>
+  Future<List<MovieModel>> fetchUpcoming() => getMovies("movie/upcoming");
+
+  Future<List<MovieModel>> fetchMovieImages(int movieId) =>
       getMovies("movie/upcoming");
+
+  Future fetchNowPlaying() async {}
 }

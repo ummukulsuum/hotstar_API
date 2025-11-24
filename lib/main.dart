@@ -10,8 +10,6 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationController()),
         ChangeNotifierProvider(create: (_) => ButtonController()),
-        // ChangeNotifierProvider(create: (_) => SearchController()),
-
       ],
       child: const MyApp(),
     ),

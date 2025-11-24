@@ -11,8 +11,8 @@ class NavigationBarScreen extends StatelessWidget {
    NavigationBarScreen({super.key});
 
   final screens = [
-    HomeScreen(),
-    const SearchScreen(),
+    const HomeScreen(),
+    const SearchScreen(), 
     const SparkScreen(),
     const DownloadScreen(),
     const ProfileScreen(),
