@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:hotstar_api/models/home_model.dart';
+import 'package:hotstar_api/service/home_service.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,31 +12,35 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  MovieService service = MovieService();
+
+  List<MovieModel> popular = [];
+  List<MovieModel> topRated = [];
+  List<MovieModel> upcoming = [];
+
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    /// Simulate API loading for 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
+    loadMovies();
   }
 
-  Widget buildReleaseContainer() {
-    return Container(
-      height: 140,
-      width: 120,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade800,
-        borderRadius: BorderRadius.circular(8),
-      ),
-    );
+Future<void> loadMovies() async {
+  try {
+    popular = await service.fetchPopular();
+    topRated = await service.fetchTopRated();
+    upcoming = await service.fetchUpcoming();
+  } catch (e) {
+    print("LOAD ERROR: $e");
   }
 
+  setState(() {
+    isLoading = false;
+  });
+}
+
+  // SHIMMER BOX
   Widget shimmerBox(double height, double width) {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade800,
@@ -50,32 +56,84 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // STATIC SHIMMER ROWS
+  Widget shimmerRow() {
+    return SizedBox(
+      height: 140,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: 6,
+        itemBuilder: (context, index) {
+          return shimmerBox(140, 120);
+        },
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+      ),
+    );
+  }
+
+  // ROW VIEW FOR MOVIES
+  Widget movieRow(List<MovieModel> list) {
+    return SizedBox(
+      height: 140,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          final movie = list[index];
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+              height: 140,
+              width: 120,
+              fit: BoxFit.cover,
+            ),
+          );
+        },
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+      ),
+    );
+  }
+
+  // SECTION TITLE
+  Widget sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final images = [
-      "assets/images/mov-1.jpeg",
-      "assets/images/mov-2.jpeg",
-      "assets/images/mov-3.jpeg",
-      "assets/images/mov-4.jpeg",
-      "assets/images/mov-5.jpeg",
-    ];
-
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.black),
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // CAROUSEL
             isLoading
                 ? shimmerBox(400, double.infinity)
                 : CarouselSlider(
-                    items: images.map((img) {
+                    items: popular.map((movie) {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          img,
-                          fit: BoxFit.cover,
+                        child: Image.network(
+                          "https://image.tmdb.org/t/p/w500${movie.posterPath}",
                           width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
                       );
                     }).toList(),
@@ -88,131 +146,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SizedBox(height: 25),
 
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  'Now Playing',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-
+            // POPULAR
+            sectionTitle("Popular"),
             const SizedBox(height: 12),
-
-            SizedBox(
-              height: 140,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: 5,
-                itemBuilder: (context, index) => isLoading
-                    ? shimmerBox(140, 120)
-                    : buildReleaseContainer(),
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
-              ),
-            ),
+            isLoading ? shimmerRow() : movieRow(popular),
 
             const SizedBox(height: 25),
 
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  'Popular',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-
+            // TOP RATED
+            sectionTitle("Top Rated"),
             const SizedBox(height: 12),
-
-            SizedBox(
-              height: 140,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: 5,
-                itemBuilder: (context, index) => isLoading
-                    ? shimmerBox(140, 120)
-                    : buildReleaseContainer(),
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
-              ),
-            ),
+            isLoading ? shimmerRow() : movieRow(topRated),
 
             const SizedBox(height: 25),
 
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  'Top Rated',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-
+            // UPCOMING
+            sectionTitle("Upcoming"),
             const SizedBox(height: 12),
-
-            SizedBox(
-              height: 140,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: 5,
-                itemBuilder: (context, index) => isLoading
-                    ? shimmerBox(140, 120)
-                    : buildReleaseContainer(),
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  'Upcoming',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            SizedBox(
-              height: 140,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: 5,
-                itemBuilder: (context, index) => isLoading
-                    ? shimmerBox(140, 120)
-                    : buildReleaseContainer(),
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
-              ),
-            ),
+            isLoading ? shimmerRow() : movieRow(upcoming),
           ],
         ),
       ),
