@@ -1,7 +1,7 @@
 // import 'package:dio/dio.dart';
 // import 'package:hotstar_api/models/home_model.dart';
 
-// class MovieService {
+// class SearchService {
 //     final Dio dio = Dio(BaseOptions(
 //   baseUrl: "https://api.themoviedb.org/3/",
 //   connectTimeout: const Duration(seconds: 15),

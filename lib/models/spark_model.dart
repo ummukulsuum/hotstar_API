@@ -1,15 +1,26 @@
-// class Movie {
-//   final String title;
-//   final String imageUrl;
+class SparkModel {
+  final int id;
+  final String title;
+  final String posterPath;
+  final String overview;
 
-//   Movie({required this.title, required this.imageUrl});
+  SparkModel({
+    required this.id,
+    required this.title,
+    required this.posterPath,
+    required this.overview,
+  });
 
-//   factory Movie.fromJson(Map<String, dynamic> json) {
-//     return Movie(
-//       title: json['title'] ?? "No Title",
-//       imageUrl: json['poster_path'] != null
-//           ? "https://image.tmdb.org/t/p/w500${json['poster_path']}"
-//           : "https://via.placeholder.com/500x750?text=No+Image",
-//     );
-//   }
-// }
+  factory SparkModel.fromJson(Map<String, dynamic> json) {
+    return SparkModel(
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      posterPath: json['poster_path'] ?? '',
+      overview: json['overview'] ?? '',
+    );
+  }
+
+  String get fullPosterPath => posterPath.isNotEmpty
+      ? 'https://image.tmdb.org/t/p/w500$posterPath'
+      : 'https://via.placeholder.com/500x750?text=No+Image';
+}
