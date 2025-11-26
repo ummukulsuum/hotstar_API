@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotstar_api/controllers/button_controller.dart';
 import 'package:hotstar_api/controllers/navbar_controller.dart';
+import 'package:hotstar_api/controllers/spark_controller.dart';
 import 'package:hotstar_api/views/screens/navigation_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationController()),
         ChangeNotifierProvider(create: (_) => ButtonController()),
+        // ChangeNotifierProvider(create: (_) => MovieProvider(),)
       ],
       child: const MyApp(),
     ),

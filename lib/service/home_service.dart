@@ -1,3 +1,4 @@
+
 import 'package:dio/dio.dart';
 import 'package:hotstar_api/models/home_model.dart';
 
@@ -5,8 +6,8 @@ class MovieService {
   final Dio dio = Dio(
     BaseOptions(
       baseUrl: "https://api.themoviedb.org/3/",
-      connectTimeout: Duration(seconds: 10),
-      receiveTimeout: Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
     ),
   );
 
@@ -32,4 +33,9 @@ class MovieService {
       getMovies("movie/upcoming");
 
   Future fetchNowPlaying() async {}
+
+
+
+
+
 }

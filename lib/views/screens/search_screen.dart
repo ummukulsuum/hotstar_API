@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shimmer/shimmer.dart';
 
-/// Movie model
 class MovieModel {
   final String title;
   final String posterPath;
@@ -18,7 +17,6 @@ class MovieModel {
   }
 }
 
-/// Movie service
 class MovieService {
   final Dio dio = Dio(BaseOptions(baseUrl: "https://api.themoviedb.org/3/"));
   final String apiKey = "dc05431987a2c74602e148724a106a3a";
@@ -32,7 +30,6 @@ class MovieService {
     return results.map((e) => MovieModel.fromJson(e)).toList();
   }
 
-  /// Optional: search movies by query
   Future<List<MovieModel>> searchMovies(String query) async {
     if (query.isEmpty) return [];
     final response = await dio.get("search/movie", queryParameters: {
@@ -44,7 +41,6 @@ class MovieService {
   }
 }
 
-/// Search Screen
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -71,7 +67,6 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  /// Load top-rated movies initially
   Future<void> loadMovies() async {
     try {
       movies = await service.fetchTopRated();
@@ -132,7 +127,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  /// Shimmer grid while loading
   Widget shimmerGrid() {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -156,7 +150,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  /// Grid with movie posters
   Widget movieGrid() {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),

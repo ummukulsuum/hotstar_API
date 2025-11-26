@@ -3,7 +3,7 @@ import 'package:hotstar_api/controllers/navbar_controller.dart';
 import 'package:hotstar_api/views/screens/download_screen.dart';
 import 'package:hotstar_api/views/screens/profile_screen.dart';
 import 'package:hotstar_api/views/screens/search_screen.dart';
-import 'package:hotstar_api/views/screens/spark_screen.dart';
+import 'package:hotstar_api/views/screens/spark_screen.dart' ;
 import 'package:provider/provider.dart';
 import 'home_screen.dart';
 
@@ -13,7 +13,7 @@ class NavigationBarScreen extends StatelessWidget {
   final screens = [
     const HomeScreen(),
     const SearchScreen(), 
-    const SparkScreen(),
+    const SparksScreen(),
     const DownloadScreen(),
     const ProfileScreen(),
   ];
