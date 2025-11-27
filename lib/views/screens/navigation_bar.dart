@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotstar_api/controllers/navbar_controller.dart';
 import 'package:hotstar_api/views/screens/download_screen.dart';
-import 'package:hotstar_api/views/screens/profile_screen.dart';
 import 'package:hotstar_api/views/screens/search_screen.dart';
 import 'package:hotstar_api/views/screens/spark_screen.dart' ;
 import 'package:provider/provider.dart';
@@ -15,7 +14,6 @@ class NavigationBarScreen extends StatelessWidget {
     const SearchScreen(), 
     const SparksScreen(),
     const DownloadScreen(),
-    const ProfileScreen(),
   ];
 
   @override
@@ -51,10 +49,7 @@ class NavigationBarScreen extends StatelessWidget {
                 icon: Icon(Icons.file_download_outlined),
                 label: "Downloads",
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: "My Space",
-              ),
+              
             ],
           ),
         );

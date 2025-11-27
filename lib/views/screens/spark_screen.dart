@@ -17,16 +17,19 @@ class SparksScreen extends StatelessWidget {
           builder: (context, controller, _) {
             if (controller.isLoading) {
               return const Center(
-                  child: CircularProgressIndicator(color: Colors.white));
+                child: CircularProgressIndicator(color: Colors.white),
+              );
             }
 
-            // Split the movies list
             final carouselMovies = controller.movies.length >= 5
                 ? controller.movies.sublist(0, 5)
                 : controller.movies;
 
             final firstListMovies = controller.movies.length > 5
-                ? controller.movies.sublist(5, controller.movies.length >= 10 ? 10 : controller.movies.length)
+                ? controller.movies.sublist(
+                    5,
+                    controller.movies.length >= 10 ? 10 : controller.movies.length,
+                  )
                 : [];
 
             final secondListMovies = controller.movies.length > 10
@@ -37,7 +40,6 @@ class SparksScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 🔥 TOP BANNER (Carousel)
                   if (carouselMovies.isNotEmpty)
                     CarouselSlider(
                       options: CarouselOptions(
@@ -60,7 +62,6 @@ class SparksScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ⭐ Episode info
                   Center(
                     child: Text(
                       "New Episode Weekly",
@@ -70,9 +71,7 @@ class SparksScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 8),
-
                   Center(
                     child: Text(
                       "33L Views • The Rebel Kid • Hindi • Reality",
@@ -85,7 +84,6 @@ class SparksScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ▶ Watch Now + Add Button
                   Center(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -110,16 +108,18 @@ class SparksScreen extends StatelessWidget {
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
+
                         const SizedBox(width: 15),
+
                         Container(
                           height: 46,
                           width: 46,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade900,
+                            color: Colors.grey,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(Icons.add, color: Colors.white),
@@ -130,7 +130,6 @@ class SparksScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // 🔘 Indicator dots (static for now)
                   Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -151,7 +150,6 @@ class SparksScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  // Freshly Dropped
                   if (firstListMovies.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -165,6 +163,7 @@ class SparksScreen extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 15),
+
                   if (firstListMovies.isNotEmpty)
                     SizedBox(
                       height: 140,
@@ -191,7 +190,6 @@ class SparksScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  // Binge with Domino's
                   if (secondListMovies.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -205,6 +203,7 @@ class SparksScreen extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 15),
+
                   if (secondListMovies.isNotEmpty)
                     SizedBox(
                       height: 140,
