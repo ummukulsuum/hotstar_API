@@ -3,6 +3,7 @@ import 'package:hotstar_api/controllers/spark_controller.dart';
 import 'package:hotstar_api/models/spark_model.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SparksScreen extends StatelessWidget {
   const SparksScreen({super.key});
@@ -11,16 +12,117 @@ class SparksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      
       body: Consumer<SparkController>(
         builder: (context, controller, child) {
-          
           if (controller.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+            // Shimmer placeholders
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Carousel shimmer
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey.shade800,
+                    highlightColor: Colors.grey.shade600,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 20,
+                      ),
+                      height: 350,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Text shimmer
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey.shade800,
+                      highlightColor: Colors.grey.shade600,
+                      child: Container(
+                        width: 200,
+                        height: 20,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey.shade800,
+                      highlightColor: Colors.grey.shade600,
+                      child: Container(
+                        width: 250,
+                        height: 15,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // First horizontal list shimmer
+                  SizedBox(
+                    height: 140,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      itemCount: 5,
+                      itemBuilder: (_, i) => Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey.shade800,
+                          highlightColor: Colors.grey.shade600,
+                          child: Container(
+                            width: 220,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Second horizontal list shimmer
+                  SizedBox(
+                    height: 140,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      itemCount: 5,
+                      itemBuilder: (_, i) => Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey.shade800,
+                          highlightColor: Colors.grey.shade600,
+                          child: Container(
+                            width: 220,
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
+          // Actual content when loaded
           final carouselMovies = controller.movies.length >= 5
               ? controller.movies.sublist(0, 5)
               : controller.movies;
@@ -80,13 +182,13 @@ class SparksScreen extends StatelessWidget {
                   child: Text(
                     "33L Views • The Rebel Kid • Hindi • Reality",
                     style: TextStyle(
-                      color: Colors.white.withOpacity(5),
+                      color: Colors.white.withOpacity(0.5),
                       fontSize: 13,
                     ),
                   ),
                 ),
 
-                 SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 Center(
                   child: Row(
