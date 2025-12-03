@@ -62,11 +62,6 @@ class DetailScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 2),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "${movie.releaseDate?.split('-')[0] ?? 'N/A'} • TMDB ${movie.voteAverage.toStringAsFixed(1)}/10 • 2h 29m • 7 Languages",
-                            style: TextStyle(color: Colors.white.withOpacity(0.7)),
-                          ),
                         ],
                       ),
                     ),
@@ -117,34 +112,6 @@ class DetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 30),
-
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20.0),
-                    child: Text(
-                      "More Like This",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    height: 140,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      children: [
-                        buildMoreLikeThisBox(),
-                        SizedBox(width: 10),
-                        buildMoreLikeThisBox(),
-                        SizedBox(width: 10),
-                        buildMoreLikeThisBox(),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 50),
                 ],
               ),
             ),
@@ -153,20 +120,6 @@ class DetailScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget buildMoreLikeThisBox() {
-    return Container(
-      height: 140,
-      width: 120,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade800,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      alignment: Alignment.center,
-      child: const Text("Related", style: TextStyle(color: Colors.white)),
-    );
-  }
-
   Widget buildWatchNowButton() {
     return Container(
       height: 45,

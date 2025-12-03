@@ -4,8 +4,6 @@ import '../models/spark_model.dart';
 class SparkService {
   final Dio dio = Dio(BaseOptions(
     baseUrl: "https://api.themoviedb.org/3/",
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 15),
   ));
 
   final String apiKey = "dc05431987a2c74602e148724a106a3a";

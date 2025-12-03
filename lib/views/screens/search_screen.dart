@@ -1,131 +1,58 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart' hide SearchController;
+import 'package:hotstar_api/controllers/search_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-class MovieModel {
-  final String title;
-  final String posterPath;
+class SearchScreen extends StatelessWidget {
+  SearchScreen({super.key});
 
-  MovieModel({required this.title, required this.posterPath});
-
-  factory MovieModel.fromJson(Map<String, dynamic> json) {
-    return MovieModel(
-      title: json['title'] ?? '',
-      posterPath: json['poster_path'] ?? '',
-    );
-  }
-}
-
-class MovieService {
-  final Dio dio = Dio(BaseOptions(baseUrl: "https://api.themoviedb.org/3/"));
-  final String apiKey = "dc05431987a2c74602e148724a106a3a";
-
-  Future<List<MovieModel>> fetchTopRated() async {
-    final response = await dio.get("movie/top_rated", queryParameters: {
-      "api_key": apiKey,
-    });
-
-    List results = response.data['results'];
-    return results.map((e) => MovieModel.fromJson(e)).toList();
-  }
-
-  Future<List<MovieModel>> searchMovies(String query) async {
-    if (query.isEmpty) return [];
-    final response = await dio.get("search/movie", queryParameters: {
-      "api_key": apiKey,
-      "query": query,
-    });
-    List results = response.data['results'];
-    return results.map((e) => MovieModel.fromJson(e)).toList();
-  }
-}
-
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
-
-  @override
-  State<SearchScreen> createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  bool _isLoading = true;
-  List<MovieModel> movies = [];
-  final MovieService service = MovieService();
   final TextEditingController searchController = TextEditingController();
-  Timer? _debounce;
-
-  @override
-  void initState() {
-    super.initState();
-    loadMovies();
-  }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
-
-  Future<void> loadMovies() async {
-    try {
-      movies = await service.fetchTopRated();
-    } catch (e) {
-      print("Error fetching movies: $e");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void onSearchChanged(String query) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        movies = await service.searchMovies(query);
-      } catch (e) {
-        print("Error searching movies: $e");
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (_) => SearchController(),
+      child: Scaffold(
         backgroundColor: Colors.black,
-        elevation: 0,
-        title: TextField(
-          controller: searchController,
-          style: const TextStyle(color: Colors.white),
-          onChanged: onSearchChanged,
-          decoration: InputDecoration(
-            hintText: "Search movies...",
-            hintStyle: TextStyle(color: Colors.grey.shade500),
-            filled: true,
-            fillColor: Colors.grey.shade900,
-            prefixIcon: const Icon(Icons.search, color: Colors.white),
-            isDense: true,
-            contentPadding: const EdgeInsets.all(12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          title: Consumer<SearchController>(
+            builder: (context, search, _) {
+              return TextField(
+                controller: searchController,
+                style: const TextStyle(color: Colors.white),
+                onChanged: search.searchMovies,
+                decoration: InputDecoration(
+                  hintText: "Search movies...",
+                  hintStyle: TextStyle(color: Colors.grey.shade500),
+                  filled: true,
+                  fillColor: Colors.grey.shade900,
+                  prefixIcon: const Icon(Icons.search, color: Colors.white),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              );
+            },
           ),
         ),
+
+        body: Consumer<SearchController>(
+          builder: (context, controller, child) {
+            if (controller.isLoading) {
+              return shimmerGrid();
+            }
+            return movieGrid(controller.movies);
+          },
+        ),
       ),
-      body: _isLoading ? shimmerGrid() : movieGrid(),
     );
   }
+
 
   Widget shimmerGrid() {
     return GridView.builder(
@@ -150,7 +77,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget movieGrid() {
+  Widget movieGrid(List movies) {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -167,7 +94,8 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Image.network(
             "https://image.tmdb.org/t/p/w500${movie.posterPath}",
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(color: Colors.grey.shade900),
+            errorBuilder: (_, __, ___) =>
+                Container(color: Colors.grey.shade900),
           ),
         );
       },

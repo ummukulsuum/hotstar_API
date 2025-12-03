@@ -1,47 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:hotstar_api/views/widgets/home_detail.dart';
 import 'package:provider/provider.dart';
-import 'package:hotstar_api/models/home_model.dart';
-import 'package:hotstar_api/service/home_service.dart';
+
+import 'package:hotstar_api/controllers/home_controller.dart';
+import 'package:hotstar_api/controllers/button_controller.dart';
+import 'package:hotstar_api/views/widgets/home_detail.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:hotstar_api/controllers/button_controller.dart'; 
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final MovieService service = MovieService();
-
-  List<MovieModel> popular = [];
-  List<MovieModel> topRated = [];
-  List<MovieModel> upcoming = [];
-
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    loadMovies();
-  }
-
-  Future<void> loadMovies() async {
-    try {
-      popular = await service.fetchPopular();
-      topRated = await service.fetchTopRated();
-      upcoming = await service.fetchUpcoming();
-    } catch (e) {
-      print("LOAD ERROR: $e");
-    }
-
-    setState(() {
-      isLoading = false;
-    });
-  }
 
   Widget shimmerBox(double height, double width) {
     return Shimmer.fromColors(
@@ -71,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget movieRow(List<MovieModel> list) {
+  Widget movieRow(List list, BuildContext ctx) {
     return SizedBox(
       height: 140,
       child: ListView.separated(
@@ -80,15 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: list.length,
         itemBuilder: (context, index) {
           final movie = list[index];
-          
-          if(movie.posterPath.isEmpty) return const SizedBox.shrink(); 
+          if (movie.posterPath.isEmpty) return const SizedBox.shrink();
 
-          return InkWell( 
+          return InkWell(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailScreen(movie: movie),
+                  builder: (_) => DetailScreen(movie: movie),
                 ),
               );
             },
@@ -127,149 +93,145 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ButtonController(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HomeController()),
+        ChangeNotifierProvider(create: (_) => ButtonController()),
+      ],
       child: Scaffold(
         appBar: AppBar(backgroundColor: Colors.black),
         backgroundColor: Colors.black,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              isLoading
-                  ? shimmerBox(400, double.infinity)
-                  : CarouselSlider(
-                      items: popular.map((movie) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailScreen(movie: movie),
+        body: Consumer<HomeController>(
+          builder: (context, home, child) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  home.isLoading
+                      ? shimmerBox(400, double.infinity)
+                      : CarouselSlider(
+                          items: home.popular.map((movie) {
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        DetailScreen(movie: movie),
+                                  ),
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: movie.posterPath.isNotEmpty
-                                ? Image.network(
-                                    "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(color: Colors.grey.shade900),
-                          ),
-                        );
-                      }).toList(),
-                      options: CarouselOptions(
-                        height: 400,
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                      ),
-                    ),
-
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Colors.purple,
-                              Colors.blue,
-                              Colors.pinkAccent,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                             if (popular.isNotEmpty) {
-                               Navigator.push(
-                                 context,
-                                 MaterialPageRoute(
-                                   builder: (context) => DetailScreen(movie: popular.first),
-                                 ),
-                               );
-                             }
-                          },
-                          icon: const Icon(
-                            Icons.play_arrow,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            "Watch Now",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                          }).toList(),
+                          options: CarouselOptions(
+                            height: 400,
+                            autoPlay: true,
+                            enlargeCenterPage: true,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
 
-                    Expanded(
-                      child: Consumer<ButtonController>(
-                        builder: (context, controller, _) {
-                          return ElevatedButton(
-                            
-                            onPressed: controller.toggleAdd,
-                            style: ElevatedButton.styleFrom(
-                              
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                
+                  const SizedBox(height: 20),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              if (home.popular.isNotEmpty) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => DetailScreen(
+                                        movie: home.popular.first),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.play_arrow,
+                                color: Colors.white),
+                            label: const Text(
+                              "Watch Now",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            child: Icon(
-                              controller.isAdded ? Icons.check : Icons.add,
-                              color: controller.isAdded
-                                  ? Colors.purple
-                                  : Colors.black,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        Expanded(
+                          child: Consumer<ButtonController>(
+                            builder: (context, controller, child) {
+                              return ElevatedButton(
+                                onPressed: controller.toggleAdd,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: Icon(
+                                  controller.isAdded
+                                      ? Icons.check
+                                      : Icons.add,
+                                  color: controller.isAdded
+                                      ? Colors.purple
+                                      : Colors.black,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  sectionTitle("Popular"),
+                  const SizedBox(height: 12),
+                  home.isLoading
+                      ? shimmerRow()
+                      : movieRow(home.popular, context),
+
+                  const SizedBox(height: 25),
+
+                  sectionTitle("Top Rated"),
+                  const SizedBox(height: 12),
+                  home.isLoading
+                      ? shimmerRow()
+                      : movieRow(home.topRated, context),
+
+                   SizedBox(height: 25),
+
+                  sectionTitle("Upcoming"),
+                  const SizedBox(height: 12),
+                  home.isLoading
+                      ? shimmerRow()
+                      : movieRow(home.upcoming, context),
+
+                  const SizedBox(height: 40),
+                ],
               ),
-
-              const SizedBox(height: 25),
-
-              sectionTitle("Popular"),
-              const SizedBox(height: 12),
-              isLoading ? shimmerRow() : movieRow(popular),
-
-              const SizedBox(height: 25),
-
-              sectionTitle("Top Rated"),
-              const SizedBox(height: 12),
-              isLoading ? shimmerRow() : movieRow(topRated),
-
-              const SizedBox(height: 25),
-
-              sectionTitle("Upcoming"),
-              const SizedBox(height: 12),
-              isLoading ? shimmerRow() : movieRow(upcoming),
-              
-              const SizedBox(height: 40),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

@@ -4,16 +4,12 @@ class MovieModel {
   final String title;
   final String overview;
   final String posterPath;
-  final String? releaseDate;
-  final double voteAverage;
 
   MovieModel({
     required this.id,
     required this.title,
     required this.overview,
     required this.posterPath,
-    required this.voteAverage,
-    this.releaseDate,
   });
 
   factory MovieModel.fromJson(Map<String, dynamic> json) {
@@ -22,8 +18,6 @@ class MovieModel {
       title: json["title"] ?? "",
       overview: json["overview"] ?? "",
       posterPath: json["poster_path"] ?? "",
-      releaseDate: json["release_date"],
-      voteAverage: (json["vote_average"] ?? 0).toDouble(),
     );
   }
 }

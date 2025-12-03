@@ -13,10 +13,10 @@ class SparkModel {
 
   factory SparkModel.fromJson(Map<String, dynamic> json) {
     return SparkModel(
-      id: json['id'] ?? 0,
-      title: json['title'] ?? '',
-      posterPath: json['poster_path'] ?? '',
-      overview: json['overview'] ?? '',
+      id: json['id'] ,
+      title: json['title'] ,
+      posterPath: json['poster_path'],
+      overview: json['overview'],
     );
   }
 

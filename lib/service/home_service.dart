@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:hotstar_api/models/home_model.dart';
 
@@ -28,14 +27,4 @@ class MovieService {
   Future<List<MovieModel>> fetchTopRated() => getMovies("movie/top_rated");
 
   Future<List<MovieModel>> fetchUpcoming() => getMovies("movie/upcoming");
-
-  Future<List<MovieModel>> fetchMovieImages(int movieId) =>
-      getMovies("movie/upcoming");
-
-  Future fetchNowPlaying() async {}
-
-
-
-
-
 }

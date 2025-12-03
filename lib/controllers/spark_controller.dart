@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hotstar_api/service/spark_service.dart';
 import '../models/spark_model.dart';
@@ -24,7 +26,7 @@ class SparkController extends ChangeNotifier {
     } catch (e) {
       isLoading = false;
       notifyListeners();
-      debugPrint('Error fetching movies: $e');
+      log('Error fetching movies: $e');
     }
   }
 }

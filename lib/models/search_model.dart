@@ -1,13 +1,16 @@
-// class MovieModel {
-//   final String title;
-//   final String posterPath;
+class SearchModel {
+  final String title;
+  final String posterPath;
 
-//   MovieModel({required this.title, required this.posterPath});
+  SearchModel({
+    required this.title,
+    required this.posterPath,
+  });
 
-//   factory MovieModel.fromJson(Map<String, dynamic> json) {
-//     return MovieModel(
-//       title: json['title'] ?? '',
-//       posterPath: json['poster_path'] ?? '',
-//     );
-//   }
-// }
+  factory SearchModel.fromJson(Map<String, dynamic> json) {
+    return SearchModel(
+      title: json['title'] ?? '',
+      posterPath: json['poster_path'] ?? '',
+    );
+  }
+}
